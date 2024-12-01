@@ -1,11 +1,53 @@
 import { Avatar, Box, Button, IconButton, Typography } from "@mui/material"
 import { useAuth } from "../context/AuthContext"
-import React from "react"
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { red } from "@mui/material/colors"
 import { IoMdSend } from "react-icons/io"
+import ChatItem from "../components/chat/ChatItem"
+import { deleteUserChats, getUserChats, sendChatRequest } from "../helpers/api-communicator"
+import toast from "react-hot-toast"
+type Message = {
+    role: 'user' | 'assisttant'
+    content: string
+}
 
 const Chat = () => {
     const auth = useAuth()
+    const inputRef = useRef<HTMLInputElement | null>(null)
+    const [chatMessages, setChatMessages] = useState<Message[]>([])
+    const handleSubmit = async () => {
+        const content = inputRef.current?.value as string
+        if (inputRef && inputRef.current) {
+            inputRef.current.value = ""
+        }
+        const newMessage: Message = { role: 'user', content }
+        setChatMessages((prev) => [...prev, newMessage])
+        const chatData = await sendChatRequest(content)
+        setChatMessages([...chatData.chats])
+    }
+    const handleDeleteChats = async () => {
+        try {
+            toast.loading('Deleating Chats', { id: 'deletechats' })
+            await deleteUserChats()
+            setChatMessages([])
+            toast.success('Deleted Chats Succesfully', { id: 'deletechats' })
+        } catch (error) {
+            console.log(error)
+            toast.error('Deleting chats failed', { id: 'deletechats' })
+        }
+    }
+    useLayoutEffect(() => {
+        if (auth?.isLoggedIn && auth.user) {
+            toast.loading("Loading Chats", { id: "loadchats" })
+            getUserChats().then((data) => {
+                setChatMessages([...data.chats])
+                toast.success("Succesfully loaded chats", { id: 'loadchats' })
+            }).catch((err) => {
+                console.log(err)
+                toast.error("Loading failed", { id: 'loadchats' })
+            })
+        }
+    }, [auth])
     return (<Box
         sx={{
             display: 'flex',
@@ -45,6 +87,7 @@ const Chat = () => {
                     Evita compartir informacion personal.
                 </Typography>
                 <Button
+                    onClick={handleDeleteChats}
                     sx={{
                         width: '200px',
                         my: 'auto',
@@ -76,7 +119,12 @@ const Chat = () => {
                     overflowX: 'hidden',
                     scrollBehavior: 'smooth'
                 }}
-            ></Box>
+            >
+                {chatMessages.map((chat, index) => (
+                    //@ts-ignore
+                    < ChatItem content={chat.content} role={chat.role} key={index} />
+                ))}
+            </Box>
             <div style={{
                 width: '100%',
                 padding: '20px',
@@ -88,6 +136,7 @@ const Chat = () => {
             >
                 {''}
                 <input type="text"
+                    ref={inputRef}
                     style={{
                         width: '100%',
                         backgroundColor: 'transparent',
@@ -98,7 +147,7 @@ const Chat = () => {
                         fontSize: '20px'
                     }}
                 />
-                <IconButton sx={{ ml: 'auto', color: 'white' }}><IoMdSend /></IconButton>
+                <IconButton onClick={handleSubmit} sx={{ ml: 'auto', color: 'white' }}><IoMdSend /></IconButton>
             </div>
         </Box>
     </Box>
