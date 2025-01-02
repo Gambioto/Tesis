@@ -5,8 +5,10 @@ import Login from "./pages/Login.tsx"
 import Signup from "./pages/Signup.tsx"
 import Chat from "./pages/Chat.tsx"
 import NotFound from "./pages/NotFound.tsx"
+import { useAuth } from "./context/AuthContext.tsx"
 
 function App() {
+  const auth = useAuth()
   return (
     <main>
       <Header />
@@ -14,7 +16,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/chat" element={<Chat />} />
+        {auth?.isLoggedIn && auth.user && (< Route path="/chat" element={<Chat />} />)}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </main>

@@ -85,3 +85,23 @@ export const verifyUser = async (
         return res.status(200).json({ message: "ERROR", cause: error.message })
     }
 }
+
+export const logoutUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction) => {
+    try {
+        const user = await User.findById(res.locals.jwtData.id)
+        if (!user) {
+            return res.status(401).send("User not registered OR Token malfunction")
+        }
+        if (user._id.toString() !== res.locals.jwtData.id) {
+            return res.status(401).send("Permissions didn't match")
+        }
+        res.clearCookie(COOKIE_NAME, { path: "/", domain: "localhost", httpOnly: true, signed: true })
+        return res.status(200).json({ message: "OK" })
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({ message: "ERROR", cause: error.message })
+    }
+}

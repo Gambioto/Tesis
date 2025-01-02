@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyUser = exports.userLogin = exports.userSignup = exports.getAllusers = void 0;
+exports.logoutUser = exports.verifyUser = exports.userLogin = exports.userSignup = exports.getAllusers = void 0;
 const User_js_1 = __importDefault(require("../models/User.js"));
 const bcrypt_1 = require("bcrypt");
 const token_manager_js_1 = require("../utils/token-manager.js");
@@ -82,4 +82,22 @@ const verifyUser = async (req, res, next) => {
     }
 };
 exports.verifyUser = verifyUser;
+const logoutUser = async (req, res, next) => {
+    try {
+        const user = await User_js_1.default.findById(res.locals.jwtData.id);
+        if (!user) {
+            return res.status(401).send("User not registered OR Token malfunction");
+        }
+        if (user._id.toString() !== res.locals.jwtData.id) {
+            return res.status(401).send("Permissions didn't match");
+        }
+        res.clearCookie(constants_js_1.COOKIE_NAME, { path: "/", domain: "localhost", httpOnly: true, signed: true });
+        return res.status(200).json({ message: "OK" });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(200).json({ message: "ERROR", cause: error.message });
+    }
+};
+exports.logoutUser = logoutUser;
 //# sourceMappingURL=user-controllers.js.map

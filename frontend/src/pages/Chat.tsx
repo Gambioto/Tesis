@@ -6,12 +6,14 @@ import { IoMdSend } from "react-icons/io"
 import ChatItem from "../components/chat/ChatItem"
 import { deleteUserChats, getUserChats, sendChatRequest } from "../helpers/api-communicator"
 import toast from "react-hot-toast"
+import { useNavigate } from 'react-router-dom'
 type Message = {
     role: 'user' | 'assisttant'
     content: string
 }
 
 const Chat = () => {
+    const navigate = useNavigate()
     const auth = useAuth()
     const inputRef = useRef<HTMLInputElement | null>(null)
     const [chatMessages, setChatMessages] = useState<Message[]>([])
@@ -46,6 +48,11 @@ const Chat = () => {
                 console.log(err)
                 toast.error("Loading failed", { id: 'loadchats' })
             })
+        }
+    }, [auth])
+    useEffect(() => {
+        if (!auth?.user) {
+            return navigate("/login")
         }
     }, [auth])
     return (<Box
@@ -127,7 +134,6 @@ const Chat = () => {
             </Box>
             <div style={{
                 width: '100%',
-                padding: '20px',
                 borderRadius: 8,
                 backgroundColor: 'rgb(12,27,39)',
                 display: 'flex',
@@ -140,14 +146,14 @@ const Chat = () => {
                     style={{
                         width: '100%',
                         backgroundColor: 'transparent',
-                        padding: '10px',
+                        padding: '20px',
                         border: 'none',
                         outline: 'none',
                         color: 'white',
                         fontSize: '20px'
                     }}
                 />
-                <IconButton onClick={handleSubmit} sx={{ ml: 'auto', color: 'white' }}><IoMdSend /></IconButton>
+                <IconButton onClick={handleSubmit} sx={{ ml: 'auto', color: 'white', mx: 1 }}><IoMdSend /></IconButton>
             </div>
         </Box>
     </Box>
