@@ -11,6 +11,9 @@ function App() {
   const auth = useAuth()
   return (
     <main>
+      <title>
+        Asistente Virtual
+      </title>
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
