@@ -5,11 +5,11 @@ import { COOKIE_NAME } from './constants'
 export const createToken = (id: string, email: string, expiresIn) => {
     const payload = { id, email }
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn })
-    console.log(token)
     return token
 }
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.signedCookies)
     const token = req.signedCookies[`${COOKIE_NAME}`]
     if (!token || token.trim() === '') {
         return res.status(401).json({ message: 'Token Not Received' })
