@@ -1,6 +1,4 @@
 import { TextField } from "@mui/material";
-import React from "react";
-import { styled } from "@mui/material/styles";
 type Props = {
     name: string,
     type: string,
