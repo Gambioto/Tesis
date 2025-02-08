@@ -11,7 +11,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const cors = require("cors");
 (0, dotenv_1.config)();
 const app = express();
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(cors({ origin: 'https://tesis-rxum.onrender.com', credentials: true }));
 app.use(express.json());
 app.use((0, cookie_parser_1.default)(process.env.COOKIE_SECRET));
 //remove in production
