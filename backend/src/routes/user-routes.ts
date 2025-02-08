@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { getAllusers, logoutUser, userLogin, userSignup, verifyUser } from "../controllers/user-controllers.js"
 import { loginValidator, signupValidator, validate } from "../utils/validators.js"
-import { verifyToken } from "../utils/token-manager.js"
+import { createToken, verifyToken } from "../utils/token-manager.js"
 
 const userRoutes = Router()
 

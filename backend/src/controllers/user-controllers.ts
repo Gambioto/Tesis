@@ -15,12 +15,8 @@ export const userSignup = async (req: Request, res: Response, next: NextFunction
         const user = new User({ username, email, password: hashedPassword })
         await user.save()
 
-        res.clearCookie(COOKIE_NAME, { path: "/", domain: "tesis-rxum.onrender", httpOnly: true, signed: true, sameSite: 'none', secure: true })
-
-        const token = createToken(user._id.toString(), user.email, "7d")
         const expires = new Date()
         expires.setDate(expires.getDate() + 7)
-        res.cookie(COOKIE_NAME, token, { path: "/", domain: "tesis-rxum.onrender", expires, httpOnly: true, signed: true, sameSite: 'none', secure: true })
 
         return res.status(200).json({ message: "OK", username: user.username, email: user.email })
     } catch (error) {
@@ -45,12 +41,9 @@ export const userLogin = async (
             return res.status(403).send({ message: "Incorrect password", id: user._id.toString() })
         }
 
-        res.clearCookie(COOKIE_NAME, { path: "/", domain: "tesis-rxum.onrender", httpOnly: true, signed: true, sameSite: 'none', secure: true })
-
-        const token = createToken(user._id.toString(), user.email, "7d")
+        createToken(user._id.toString(), user.email, "7d")
         const expires = new Date()
         expires.setDate(expires.getDate() + 7)
-        res.cookie(COOKIE_NAME, token, { path: "/", domain: "tesis-rxum.onrender", expires, httpOnly: true, signed: true, sameSite: 'none', secure: true })
 
         return res.status(200).json({ message: "OK", username: user.username, email: user.email })
     } catch (error) {
