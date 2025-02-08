@@ -8,7 +8,7 @@ const userRoutes = Router()
 userRoutes.get("/", getAllusers)
 userRoutes.post("/signup", validate(signupValidator), userSignup)
 userRoutes.post("/login", validate(loginValidator), userLogin)
-userRoutes.get("/auth-status", verifyUser)
+userRoutes.get("/auth-status")
 userRoutes.get("/logout", logoutUser)
 
 export default userRoutes
