@@ -9,10 +9,7 @@ export const createToken = (id: string, email: string, expiresIn) => {
 }
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.signedCookies[`${COOKIE_NAME}`]
-    if (!token || token.trim() === '') {
-        return res.status(401).json({ message: 'Token Not Received' })
-    }
+    const token = process.env.JWT_SECRET
     return new Promise<void>((resolve, reject) => {
         return jwt.verify(token, process.env.JWT_SECRET, (err, success) => {
             if (err) {
